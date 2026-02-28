@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sincronizado - MOTOREFACCIONES ALVAREZ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        :root { --primary: #e74c3c; --accent: #f39c12; --dark: #0a0a0a; --card: #1a1a1a; --white: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: var(--white); margin: 0; padding: 10px; }
+        .container { max-width: 1200px; margin: auto; }
+        header { text-align: center; border-bottom: 3px solid var(--primary); padding: 15px; margin-bottom: 20px; }
+        .logo-name { font-size: 1.8rem; font-weight: 900; text-transform: uppercase; margin:0; }
+        .contact { color: var(--accent); font-weight: bold; }
+        .box { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #333; margin-bottom: 20px; }
+        input, select { background: #000; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 8px; width: 100%; margin-bottom: 10px; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+        .btn-sell { background: var(--primary); color: white; }
+        .btn-save { background: var(--accent); color: black; }
+        .table-wrap { overflow-x: auto; background: white; border-radius: 8px; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; color: #222; min-width: 800px; }
+        th { background: #2c3e50; color: white; padding: 12px; text-align: left; }
+        td { padding: 10px; border-bottom: 1px solid #eee; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1 class="logo-name">MOTOREFACCIONES ALVAREZ</h1>
+        <p class="contact"><i class="fas fa-phone"></i> 3327680184</p>
+    </header>
+    <div class="main-grid">
+        <div class="box">
+            <h2 style="color:var(--primary); font-size: 1rem;">CAJA DE VENTA (SINCRONIZADA)</h2>
+            <div id="reader" style="width:100%; margin-bottom:10px;"></div>
+            <select id="selVenta"></select>
+            <input type="number" id="cantVenta" value="1" min="1">
+            <button class="btn btn-sell" onclick="vender()">REGISTRAR VENTA</button>
+        </div>
+        <div class="box">
+            <h2 style="color:var(--accent); font-size: 1rem;">NUEVO PRODUCTO</h2>
+            <input type="text" id="inNombre" placeholder="Nombre de la pieza">
+            <input type="number" id="inStock" placeholder="Cantidad">
+            <input type="number" id="inPrecio" placeholder="Precio $">
+            <button class="btn btn-save" onclick="guardar()">GUARDAR EN RED</button>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Pieza</th><th>Stock</th><th>Precio</th><th>Total</th><th>Acción</th></tr></thead>
+            <tbody id="lista"></tbody>
+        </table>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    // Configuración real de tu captura
+    const firebaseConfig = {
+        apiKey: "AIzaSyD2Thbdk3CzO4vlkjnKvLsR6XyWx5fiz3M",
+        authDomain: "refaccionaria-alvarez.firebaseapp.com",
+        projectId: "refaccionaria-alvarez",
+        storageBucket: "refaccionaria-alvarez.firebasestorage.app",
+        messagingSenderId: "787761966868",
+        appId: "1:787761966868:web:f3982ccf1a0443b362dc01"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    let items = {};
+
+    onValue(ref(db, 'inventario'), (snap) => {
+        items = snap.val() || {};
+        const lista = document.getElementById('lista');
+        const sel = document.getElementById('selVenta');
+        lista.innerHTML = ''; sel.innerHTML = '<option value="">Seleccionar...</option>';
+        for(let id in items) {
+            const p = items[id];
+            lista.innerHTML += `<tr><td>${p.nombre}</td><td>${p.stock}</td><td>$${p.precio}</td><td>$${p.stock*p.precio}</td><td><button onclick="borrar('${id}')">X</button></td></tr>`;
+            sel.innerHTML += `<option value="${id}">${p.nombre}</option>`;
+        }
+    });
+
+    window.guardar = () => {
+        const nom = document.getElementById('inNombre').value;
+        const st = parseInt(document.getElementById('inStock').value) || 0;
+        const pr = parseFloat(document.getElementById('inPrecio').value) || 0;
+        if(nom) set(ref(db, 'inventario/' + nom.replace(/[^a-zA-Z0-9]/g, '_')), { nombre: nom, stock: st, precio: pr });
+    };
+
+    window.vender = () => {
+        const id = document.getElementById('selVenta').value;
+        const n = parseInt(document.getElementById('cantVenta').value);
+        if(items[id] && items[id].stock >= n) update(ref(db, 'inventario/' + id), { stock: items[id].stock - n });
+    };
+
+    window.borrar = (id) => { if(confirm("¿Eliminar?")) remove(ref(db, 'inventario/' + id)); };
+    
+    const sc = new Html5Qrcode("reader");
+    sc.start({ facingMode: "environment" }, { fps: 10, qrbox: 200 }, (t) => { document.getElementById('inNombre').value = t; });
+</script>
+</body>
+</html>
