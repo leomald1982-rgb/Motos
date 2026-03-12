@@ -263,3 +263,160 @@
     </script>
 </body>
 </html>
+let row = lines[i].trim();
+                    if (!row || /codigo|foto|precio|página/i.test(row)) continue;
+
+                    // Buscar precio: $ 27.00 o 27.00
+                    let priceMatch = row.match(/\$?\s*(\d+\.\d{2})/);
+
+                    if (priceMatch) {
+                        let price = parseFloat(priceMatch[1]);
+                        let currentDesc = row.replace(priceMatch[0], '').trim();
+                        let fullDesc = (bufferText + " " + currentDesc).trim();
+
+                        if (fullDesc.length > 2) {
+                            let parts = fullDesc.split(/\s+/);
+                            let code = parts[0].toUpperCase();
+                            
+                            parts.shift(); // Quitar el código de las partes
+                            let name = parts.join(' ').toUpperCase();
+                            if (name === "") name = code;
+
+                            // Comprobar duplicados de forma clásica
+                            let existe = false;
+                            for (let j = 0; j < extras.length; j++) {
+                                if (extras[j].c === code) { existe = true; break; }
+                            }
+
+                            if (!existe) {
+                                extras.unshift({ c: code, n: name, p: price, isExtra: true });
+                                added++;
+                            }
+                        }
+                        bufferText = ""; // Limpiar memoria
+                    } else {
+                        bufferText += " " + row;
+                    }
+                }
+
+                if (added > 0) {
+                    saveAndRefresh();
+                    alert("¡Éxito! Se agregaron " + added + " productos.");
+                    closeSmartModal();
+                } else {
+                    alert("No se detectaron precios. Asegúrate de que los precios tengan decimales (Ejemplo: $ 27.00)");
+                }
+
+            } catch (error) {
+                alert("Ocurrió un error al procesar: " + error.message);
+            }
+        }
+
+        // 4. RENDERIZADO CLÁSICO (Evita el SyntaxError en editores móviles)
+        function render(resetScroll) {
+            let container = document.getElementById('productList');
+            if (resetScroll) { document.getElementById('listContainer').scrollTop = 0; }
+            
+            container.innerHTML = ""; // Limpiar lista
+            
+            let itemsToRender = filteredDB.slice(0, limit);
+
+            for (let i = 0; i < itemsToRender.length; i++) {
+                let item = itemsToRender[i];
+                let div = document.createElement('div');
+                div.className = "product-card flex justify-between items-center";
+                
+                let btnEliminar = "";
+                if (item.isExtra) {
+                    btnEliminar = '<button onclick="deleteItem(\'' + item.c + '\')" class="text-gray-800 text-xl px-2">×</button>';
+                }
+
+                div.innerHTML = 
+                    '<div class="flex-1 pr-2 overflow-hidden">' +
+                        '<div class="text-[8px] font-black text-brand_red font-mono uppercase mb-0.5">' + item.c + '</div>' +
+                        '<div class="text-[11px] text-gray-300 uppercase font-medium leading-tight">' + item.n + '</div>' +
+                    '</div>' +
+                    '<div class="text-right flex items-center gap-3">' +
+                        '<div class="text-lg font-black text-white font-mono tracking-tighter">$' + item.p + '</div>' +
+                        btnEliminar +
+                    '</div>';
+                
+                container.appendChild(div);
+            }
+        }
+
+        function handleSearch(query) {
+            if (!query) query = "";
+            let q = query.toLowerCase().trim();
+            
+            filteredDB = [];
+            for (let i = 0; i < db.length; i++) {
+                let item = db[i];
+                if ((item.c && String(item.c).toLowerCase().includes(q)) || 
+                    (item.n && String(item.n).toLowerCase().includes(q))) {
+                    filteredDB.push(item);
+                }
+            }
+            
+            limit = 60;
+            document.getElementById('counter').innerText = filteredDB.length + " ITEMS";
+            render(true);
+        }
+
+        // 5. FUNCIONES DE GUARDADO
+        function saveManual() {
+            let c = document.getElementById('newC').value.trim().toUpperCase();
+            let n = document.getElementById('newN').value.trim().toUpperCase();
+            let p = document.getElementById('newP').value;
+            
+            if (c && p) {
+                if (n === "") n = c;
+                extras.unshift({c: c, n: n, p: parseFloat(p), isExtra: true});
+                saveAndRefresh();
+                closeManualModal();
+            } else {
+                alert("Código y precio son obligatorios");
+            }
+        }
+
+        function deleteItem(code) {
+            let nuevosExtras = [];
+            for(let i=0; i < extras.length; i++) {
+                if(extras[i].c !== code) nuevosExtras.push(extras[i]);
+            }
+            extras = nuevosExtras;
+            saveAndRefresh();
+        }
+
+        function clearAllExtras() {
+            if (confirm("¿Borrar todo lo agregado?")) {
+                extras = [];
+                saveAndRefresh();
+            }
+        }
+
+        function saveAndRefresh() {
+            localStorage.setItem('alvarez_extras', JSON.stringify(extras));
+            db = [].concat(extras, baseCatalogo);
+            handleSearch(document.getElementById('searchInput').value);
+        }
+
+        // Eventos
+        document.getElementById('listContainer').onscroll = function(e) {
+            if (e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight - 50) {
+                if (limit < filteredDB.length) { 
+                    limit += 60; 
+                    render(false); 
+                }
+            }
+        };
+
+        document.getElementById('searchInput').oninput = function(e) {
+            handleSearch(e.target.value);
+        };
+        
+        // Iniciar app
+        handleSearch("");
+    </script>
+</body>
+</html>
