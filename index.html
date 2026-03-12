@@ -2,105 +2,203 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sincronizado - MOTOREFACCIONES ALVAREZ</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ALVAREZ ULTRA FIX</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="datos_alvarez.js"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { brand_red: '#FF3B30', dark_card: '#121212' } } }
+        }
+    </script>
     <style>
-        :root { --primary: #e74c3c; --accent: #f39c12; --dark: #0a0a0a; --card: #1a1a1a; --white: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--dark); color: var(--white); margin: 0; padding: 10px; }
-        .container { max-width: 1200px; margin: auto; }
-        header { text-align: center; border-bottom: 3px solid var(--primary); padding: 15px; margin-bottom: 20px; }
-        .logo-name { font-size: 1.8rem; font-weight: 900; text-transform: uppercase; margin:0; }
-        .contact { color: var(--accent); font-weight: bold; }
-        .box { background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #333; margin-bottom: 20px; }
-        input, select { background: #000; color: #fff; border: 1px solid #444; padding: 12px; border-radius: 8px; width: 100%; margin-bottom: 10px; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
-        .btn-sell { background: var(--primary); color: white; }
-        .btn-save { background: var(--accent); color: black; }
-        .table-wrap { overflow-x: auto; background: white; border-radius: 8px; margin-top: 20px; }
-        table { width: 100%; border-collapse: collapse; color: #222; min-width: 800px; }
-        th { background: #2c3e50; color: white; padding: 12px; text-align: left; }
-        td { padding: 10px; border-bottom: 1px solid #eee; }
+        body { background-color: #000; color: #fff; font-family: system-ui, sans-serif; }
+        #listContainer { height: calc(100vh - 180px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        #listContainer::-webkit-scrollbar { display: none; }
+        .product-card { height: 70px; border-bottom: 1px solid #1a1a1a; contain: content; }
+        .glass { background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
     </style>
 </head>
-<body>
-<div class="container">
-    <header>
-        <h1 class="logo-name">MOTOREFACCIONES ALVAREZ</h1>
-        <p class="contact"><i class="fas fa-phone"></i> 3327680184</p>
+<body class="flex flex-col h-screen overflow-hidden antialiased">
+
+    <header class="p-4 bg-black border-b border-white/5 space-y-3">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-9 h-9 bg-brand_red rounded-xl flex items-center justify-center font-black italic shadow-lg shadow-brand_red/20">A</div>
+                <h1 class="text-[11px] font-black leading-none tracking-tighter uppercase">MotoRefacciones<br><span class="text-brand_red">Alvarez Ultra</span></h1>
+            </div>
+            <div class="flex flex-col items-end gap-1">
+                <div id="counter" class="text-[10px] font-mono bg-white/5 px-2 py-1 rounded-lg text-gray-400 text-center min-w-[60px]">0 ITEMS</div>
+                <button onclick="clearExtras()" class="text-[8px] text-gray-600 underline font-bold uppercase">Borrar Extras</button>
+            </div>
+        </div>
+
+        <div class="relative">
+            <input type="text" id="searchInput" placeholder="Buscar producto..." 
+                   class="w-full bg-dark_card border border-white/10 p-4 pl-12 rounded-2xl text-white outline-none focus:ring-1 focus:ring-brand_red">
+            <svg class="w-5 h-5 absolute left-4 top-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        </div>
     </header>
-    <div class="main-grid">
-        <div class="box">
-            <h2 style="color:var(--primary); font-size: 1rem;">CAJA DE VENTA (SINCRONIZADA)</h2>
-            <div id="reader" style="width:100%; margin-bottom:10px;"></div>
-            <select id="selVenta"></select>
-            <input type="number" id="cantVenta" value="1" min="1">
-            <button class="btn btn-sell" onclick="vender()">REGISTRAR VENTA</button>
-        </div>
-        <div class="box">
-            <h2 style="color:var(--accent); font-size: 1rem;">NUEVO PRODUCTO</h2>
-            <input type="text" id="inNombre" placeholder="Nombre de la pieza">
-            <input type="number" id="inStock" placeholder="Cantidad">
-            <input type="number" id="inPrecio" placeholder="Precio $">
-            <button class="btn btn-save" onclick="guardar()">GUARDAR EN RED</button>
+
+    <main id="listContainer">
+        <div id="productList"></div>
+    </main>
+
+    <footer class="fixed bottom-0 w-full p-4 glass border-t border-white/5 grid grid-cols-2 gap-3 pb-8">
+        <button onclick="openSmartModal()" class="bg-white/5 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest">
+            ⚡ Carga Rápida
+        </button>
+        <button onclick="document.getElementById('modalManual').style.display='flex'" class="bg-brand_red py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest">
+            + Nuevo Item
+        </button>
+    </footer>
+
+    <div id="smartModal" style="display:none;" class="fixed inset-0 bg-black/95 z-50 p-6 flex flex-col items-center justify-center">
+        <div class="w-full max-w-sm space-y-4">
+            <h2 class="text-xl font-bold text-center">Importar Lista</h2>
+            <p class="text-[10px] text-gray-500 text-center">Formato: CODIGO DESCRIPCION PRECIO (Uno por línea)</p>
+            <textarea id="bulkText" rows="8" placeholder="Ejemplo:&#10;COD01 Amortiguador 450" 
+                      class="w-full bg-dark_card p-4 rounded-2xl border border-white/10 outline-none focus:border-brand_red font-mono text-xs"></textarea>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="closeSmartModal()" class="py-4 text-gray-500 text-[10px] font-bold uppercase">Cerrar</button>
+                <button onclick="processBulkText()" class="bg-brand_red py-4 rounded-xl text-[10px] font-black uppercase">Procesar</button>
+            </div>
         </div>
     </div>
-    <div class="table-wrap">
-        <table>
-            <thead><tr><th>Pieza</th><th>Stock</th><th>Precio</th><th>Total</th><th>Acción</th></tr></thead>
-            <tbody id="lista"></tbody>
-        </table>
+
+    <div id="modalManual" style="display:none;" class="fixed inset-0 bg-black/95 z-50 p-6 flex flex-col items-center justify-center">
+        <div class="w-full max-w-sm bg-dark_card p-6 rounded-3xl space-y-4">
+            <input type="text" id="newC" placeholder="CÓDIGO" class="w-full bg-black p-4 rounded-xl border border-white/10 uppercase">
+            <input type="text" id="newN" placeholder="DESCRIPCIÓN" class="w-full bg-black p-4 rounded-xl border border-white/10 uppercase">
+            <input type="number" id="newP" placeholder="PRECIO" class="w-full bg-black p-4 rounded-xl border border-white/10 text-brand_red font-bold">
+            <div class="flex gap-4 pt-2">
+                <button onclick="document.getElementById('modalManual').style.display='none'" class="flex-1 text-gray-500 text-[10px] font-bold">ATRÁS</button>
+                <button onclick="saveManual()" class="flex-1 bg-brand_red py-4 rounded-xl text-[10px] font-black">GUARDAR</button>
+            </div>
+        </div>
     </div>
-</div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    <script>
+        let extras = JSON.parse(localStorage.getItem('alvarez_extras')) || [];
+        let db = [...extras, ...CATALOGO_BASE];
+        let filteredDB = [];
+        let itemsToShow = 60;
 
-    // Configuración real de tu captura
-    const firebaseConfig = {
-        apiKey: "AIzaSyD2Thbdk3CzO4vlkjnKvLsR6XyWx5fiz3M",
-        authDomain: "refaccionaria-alvarez.firebaseapp.com",
-        projectId: "refaccionaria-alvarez",
-        storageBucket: "refaccionaria-alvarez.firebasestorage.app",
-        messagingSenderId: "787761966868",
-        appId: "1:787761966868:web:f3982ccf1a0443b362dc01"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    let items = {};
-
-    onValue(ref(db, 'inventario'), (snap) => {
-        items = snap.val() || {};
-        const lista = document.getElementById('lista');
-        const sel = document.getElementById('selVenta');
-        lista.innerHTML = ''; sel.innerHTML = '<option value="">Seleccionar...</option>';
-        for(let id in items) {
-            const p = items[id];
-            lista.innerHTML += `<tr><td>${p.nombre}</td><td>${p.stock}</td><td>$${p.precio}</td><td>$${p.stock*p.precio}</td><td><button onclick="borrar('${id}')">X</button></td></tr>`;
-            sel.innerHTML += `<option value="${id}">${p.nombre}</option>`;
+        function handleSearch(query) {
+            const q = query.toLowerCase().trim();
+            // Búsqueda ultra rápida
+            filteredDB = db.filter(i => 
+                (i.c && i.c.toLowerCase().includes(q)) || 
+                (i.n && i.n.toLowerCase().includes(q))
+            );
+            itemsToShow = 60; 
+            document.getElementById('counter').innerText = `${filteredDB.length} ITEMS`;
+            render(true);
         }
-    });
 
-    window.guardar = () => {
-        const nom = document.getElementById('inNombre').value;
-        const st = parseInt(document.getElementById('inStock').value) || 0;
-        const pr = parseFloat(document.getElementById('inPrecio').value) || 0;
-        if(nom) set(ref(db, 'inventario/' + nom.replace(/[^a-zA-Z0-9]/g, '_')), { nombre: nom, stock: st, precio: pr });
-    };
+        function render(resetScroll = false) {
+            const container = document.getElementById('productList');
+            if (resetScroll) document.getElementById('listContainer').scrollTop = 0;
+            
+            const chunk = filteredDB.slice(0, itemsToShow);
+            container.innerHTML = chunk.map((item, index) => `
+                <div class="product-card flex justify-between items-center px-4">
+                    <div class="flex-1 pr-4">
+                        <div class="text-[8px] font-black text-brand_red font-mono uppercase leading-none mb-1">${item.c}</div>
+                        <div class="text-[11px] text-gray-300 uppercase font-medium leading-tight truncate w-64">${item.n}</div>
+                    </div>
+                    <div class="text-right flex items-center gap-3">
+                        <div class="text-lg font-black tracking-tighter text-white font-mono">$${item.p}</div>
+                        ${item.isExtra ? `<button onclick="deleteItem('${item.c}')" class="text-gray-800 p-2 text-xl">×</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
 
-    window.vender = () => {
-        const id = document.getElementById('selVenta').value;
-        const n = parseInt(document.getElementById('cantVenta').value);
-        if(items[id] && items[id].stock >= n) update(ref(db, 'inventario/' + id), { stock: items[id].stock - n });
-    };
+        document.getElementById('listContainer').addEventListener('scroll', function(e) {
+            if (e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight - 100) {
+                if (itemsToShow < filteredDB.length) {
+                    itemsToShow += 60;
+                    render();
+                }
+            }
+        });
 
-    window.borrar = (id) => { if(confirm("¿Eliminar?")) remove(ref(db, 'inventario/' + id)); };
-    
-    const sc = new Html5Qrcode("reader");
-    sc.start({ facingMode: "environment" }, { fps: 10, qrbox: 200 }, (t) => { document.getElementById('inNombre').value = t; });
-</script>
+        function processBulkText() {
+            const text = document.getElementById('bulkText').value;
+            const lines = text.split('\n');
+            let count = 0;
+
+            lines.forEach(line => {
+                const row = line.trim();
+                if (!row) return;
+
+                const parts = row.split(/\s+/);
+                if (parts.length >= 2) {
+                    const p = parts[parts.length - 1].replace(/[^0-9.]/g, '');
+                    const c = parts[0].toUpperCase();
+                    const n = parts.slice(1, parts.length - 1).join(' ').toUpperCase() || c;
+
+                    // VERIFICACIÓN: Evitar duplicados y basura
+                    if (c && p && !extras.find(e => e.c === c)) {
+                        extras.unshift({c, n, p, isExtra: true});
+                        count++;
+                    }
+                }
+            });
+
+            if (count > 0) {
+                saveAndRefresh();
+                alert(`Éxito: Se agregaron ${count} productos nuevos.`);
+            } else {
+                alert("No se encontraron productos nuevos o formato incorrecto.");
+            }
+            closeSmartModal();
+        }
+
+        function saveManual() {
+            const c = document.getElementById('newC').value.trim().toUpperCase();
+            const n = document.getElementById('newN').value.trim().toUpperCase();
+            const p = document.getElementById('newP').value;
+            
+            if (c && p) {
+                if (extras.find(e => e.c === c)) { alert("Este código ya existe"); return; }
+                extras.unshift({c, n: n || c, p, isExtra: true});
+                saveAndRefresh();
+                document.getElementById('modalManual').style.display='none';
+            }
+        }
+
+        function deleteItem(code) {
+            extras = extras.filter(e => e.c !== code);
+            saveAndRefresh();
+        }
+
+        function clearExtras() {
+            if(confirm("¿Estás seguro de borrar TODOS los productos agregados?")) {
+                extras = [];
+                saveAndRefresh();
+            }
+        }
+
+        function saveAndRefresh() {
+            try {
+                localStorage.setItem('alvarez_extras', JSON.stringify(extras));
+                db = [...extras, ...CATALOGO_BASE];
+                handleSearch(document.getElementById('searchInput').value);
+            } catch(e) {
+                alert("Error de memoria: La lista es demasiado grande para el teléfono.");
+            }
+        }
+
+        function openSmartModal() { 
+            document.getElementById('bulkText').value = "";
+            document.getElementById('smartModal').style.display = 'flex'; 
+        }
+        function closeSmartModal() { document.getElementById('smartModal').style.display = 'none'; }
+
+        document.getElementById('searchInput').oninput = (e) => handleSearch(e.target.value);
+        handleSearch("");
+    </script>
 </body>
 </html>
