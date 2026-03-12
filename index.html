@@ -2,223 +2,264 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portafolio Pro - Dark & Gold</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ALVAREZ SMART V8 - SEGURO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="datos_alvarez.js"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { brand_red: '#FF3B30', dark_card: '#121212' } } }
+        }
+    </script>
     <style>
-        :root {
-            --carbono: #121212;
-            --dorado: #D4AF37;
-            --dorado-brillo: #F1D592;
-            --blanco-suave: #E0E0E0;
-            --gris-oscuro: #1e1e1e;
-        }
-
-        /* Estilos Globales */
-        * {
-            box-sizing: border-box;
-            scroll-behavior: smooth;
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            background-color: var(--carbono);
-            color: var(--blanco-suave);
-            line-height: 1.6;
-        }
-
-        /* Sección Hero */
-        .hero {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
-            background: radial-gradient(circle at center, #1a1a1a 0%, var(--carbono) 100%);
-        }
-
-        .hero h1 {
-            font-size: clamp(2.5rem, 8vw, 4.5rem); /* Tamaño fluido */
-            margin-bottom: 10px;
-            color: var(--dorado);
-            background: linear-gradient(to right, var(--dorado), var(--dorado-brillo));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            font-size: clamp(1rem, 4vw, 1.2rem);
-            font-weight: 300;
-            letter-spacing: 2px;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-        }
-
-        .cta-button {
-            padding: 15px 40px;
-            border: 2px solid var(--dorado);
-            color: var(--dorado);
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .cta-button:hover {
-            background-color: var(--dorado);
-            color: var(--carbono);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
-        }
-
-        /* Sección de Proyectos (Grid) */
-        .portfolio-section {
-            padding: 80px 10%;
-        }
-
-        .portfolio-section h2 {
-            text-align: center;
-            color: var(--dorado);
-            margin-bottom: 50px;
-            font-size: 2rem;
-        }
-
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-        }
-
-        .project-card {
-            background: var(--gris-oscuro);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid #333;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-        }
-
-        .project-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--dorado);
-        }
-
-        .project-image {
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(45deg, #222, #333);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #444;
-            font-weight: bold;
-        }
-
-        .project-info {
-            padding: 20px;
-        }
-
-        .project-info h3 {
-            margin: 0;
-            color: var(--dorado);
-            font-size: 1.3rem;
-        }
-
-        .project-info span {
-            font-size: 0.8rem;
-            color: #888;
-        }
-
-        /* Sección de Contacto */
-        .contact-section {
-            text-align: center;
-            padding: 100px 20px;
-            background: linear-gradient(to bottom, var(--carbono), #000);
-        }
-
-        .contact-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 30px;
-        }
-
-        .btn-contact {
-            padding: 12px 25px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-            border: 1px solid;
-            transition: 0.3s;
-        }
-
-        .whatsapp { color: #25D366; border-color: #25D366; }
-        .linkedin { color: #0077B5; border-color: #0077B5; }
-
-        .btn-contact:hover { transform: scale(1.05); background: rgba(255,255,255,0.05); }
-
-        footer {
-            margin-top: 60px;
-            padding: 20px;
-            font-size: 0.8rem;
-            color: #555;
-            border-top: 1px solid #222;
-        }
-
-        /* Ajustes para Celulares (Media Queries) */
-        @media (max-width: 768px) {
-            .hero h1 { line-height: 1.1; }
-            .portfolio-section { padding: 50px 5%; }
-        }
+        body { background-color: #000; color: #fff; font-family: system-ui, sans-serif; overflow: hidden; }
+        #listContainer { height: calc(100vh - 180px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .product-card { border-bottom: 1px solid #1a1a1a; padding: 12px 16px; }
+        .glass { background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
     </style>
 </head>
-<body>
+<body class="flex flex-col h-screen antialiased">
 
-    <section class="hero">
-        <h1>TU NOMBRE AQUÍ</h1>
-        <p>Creativo Digital & Desarrollador</p>
-        <a href="#proyectos" class="cta-button">Ver Proyectos</a>
-    </section>
-
-    <section id="proyectos" class="portfolio-section">
-        <h2>Proyectos Destacados</h2>
-        <div class="portfolio-grid">
-            <div class="project-card">
-                <div class="project-image">IMAGEN</div>
-                <div class="project-info">
-                    <h3>Proyecto Alpha</h3>
-                    <span>Diseño UI/UX</span>
-                </div>
+    <header class="p-4 bg-black border-b border-white/5 space-y-3 shrink-0">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-9 h-9 bg-brand_red rounded-xl flex items-center justify-center font-black italic text-white">A</div>
+                <h1 class="text-[11px] font-black uppercase leading-none text-white">Alvarez<br><span class="text-brand_red">Smart V8</span></h1>
             </div>
-            <div class="project-card">
-                <div class="project-image">IMAGEN</div>
-                <div class="project-info">
-                    <h3>Proyecto Beta</h3>
-                    <span>Desarrollo Web</span>
-                </div>
-            </div>
-            <div class="project-card">
-                <div class="project-image">IMAGEN</div>
-                <div class="project-info">
-                    <h3>Proyecto Gamma</h3>
-                    <span>Branding Premium</span>
-                </div>
+            <div class="flex flex-col items-end">
+                <div id="counter" class="text-[10px] font-mono bg-white/5 px-2 py-1 rounded-lg text-gray-400">0 ITEMS</div>
+                <button onclick="clearAllExtras()" class="text-[8px] text-gray-600 mt-1 uppercase font-bold">Borrar Todo</button>
             </div>
         </div>
-    </section>
+        <input type="text" id="searchInput" placeholder="Buscar producto..." 
+               class="w-full bg-dark_card border border-white/10 p-4 pl-12 rounded-2xl text-white outline-none focus:ring-1 focus:ring-brand_red">
+    </header>
 
-    <section class="contact-section">
-        <h2>¿Trabajamos juntos?</h2>
-        <div class="contact-buttons">
-            <a href="#" class="btn-contact whatsapp">WhatsApp</a>
-            <a href="#" class="btn-contact linkedin">LinkedIn</a>
+    <main id="listContainer">
+        <div id="productList"></div>
+    </main>
+
+    <footer class="p-4 glass border-t border-white/5 grid grid-cols-2 gap-3 pb-8 shrink-0">
+        <button onclick="openSmartModal()" class="bg-white/5 py-3 rounded-2xl text-[10px] font-bold uppercase text-white">
+            ⚡ Pegar Lista
+        </button>
+        <button onclick="openManualModal()" class="bg-brand_red py-3 rounded-2xl text-[10px] font-black uppercase text-white shadow-lg">
+            + Nuevo Item
+        </button>
+    </footer>
+
+    <div id="smartModal" style="display:none;" class="fixed inset-0 bg-black/95 z-50 p-6 flex flex-col items-center justify-center">
+        <div class="w-full max-w-sm space-y-4">
+            <h2 class="text-xl font-bold text-center text-white">Procesador Seguro</h2>
+            <textarea id="bulkText" rows="10" placeholder="Pega el texto aquí..." 
+                      class="w-full bg-dark_card p-4 rounded-2xl border border-white/10 outline-none text-white font-mono text-xs"></textarea>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="closeSmartModal()" class="py-4 text-gray-500 text-[10px] font-bold uppercase">Cerrar</button>
+                <button onclick="processBulkText()" class="bg-brand_red py-4 rounded-xl text-[10px] font-black uppercase text-white">Procesar</button>
+            </div>
         </div>
-        <footer>
-            <p>&copy; 2026 Tu Nombre. Hecho con estilo.</p>
-        </footer>
-    </section>
+    </div>
 
+    <div id="modalManual" style="display:none;" class="fixed inset-0 bg-black/95 z-50 p-6 flex flex-col items-center justify-center">
+        <div class="w-full max-w-sm bg-dark_card p-6 rounded-3xl space-y-4">
+            <input type="text" id="newC" placeholder="CÓDIGO" class="w-full bg-black p-4 rounded-xl border border-white/10 uppercase text-white">
+            <input type="text" id="newN" placeholder="DESCRIPCIÓN" class="w-full bg-black p-4 rounded-xl border border-white/10 uppercase text-white">
+            <input type="number" id="newP" placeholder="PRECIO" class="w-full bg-black p-4 rounded-xl border border-white/10 text-brand_red font-bold">
+            <div class="flex gap-3">
+                <button onclick="closeManualModal()" class="flex-1 text-gray-400 text-[10px] font-bold uppercase">Atrás</button>
+                <button onclick="saveManual()" class="flex-1 bg-brand_red py-4 rounded-xl text-[10px] font-black uppercase text-white">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. INICIALIZACIÓN SEGURA DE DATOS
+        let extras = [];
+        try {
+            let guardados = localStorage.getItem('alvarez_extras');
+            if (guardados) { extras = JSON.parse(guardados); }
+        } catch (e) {
+            console.log("Error leyendo guardados", e);
+        }
+
+        let baseCatalogo = [];
+        if (typeof CATALOGO_BASE !== 'undefined') {
+            baseCatalogo = CATALOGO_BASE;
+        }
+
+        let db = [].concat(extras, baseCatalogo);
+        let filteredDB = [];
+        let limit = 60;
+
+        // 2. CONTROL DE MODALES
+        function openSmartModal() { document.getElementById('smartModal').style.display = 'flex'; }
+        function closeSmartModal() { document.getElementById('smartModal').style.display = 'none'; }
+        function openManualModal() { document.getElementById('modalManual').style.display = 'flex'; }
+        function closeManualModal() { document.getElementById('modalManual').style.display = 'none'; }
+
+        // 3. MOTOR DE PROCESAMIENTO A PRUEBA DE FALLOS
+        function processBulkText() {
+            try {
+                let text = document.getElementById('bulkText').value;
+                let lines = text.split('\n');
+                let added = 0;
+                let bufferText = "";
+
+                for (let i = 0; i < lines.length; i++) {
+                    let row = lines[i].trim();
+                    if (!row || /codigo|foto|precio|página/i.test(row)) continue;
+
+                    // Buscar precio: $ 27.00 o 27.00
+                    let priceMatch = row.match(/\$?\s*(\d+\.\d{2})/);
+
+                    if (priceMatch) {
+                        let price = parseFloat(priceMatch[1]);
+                        let currentDesc = row.replace(priceMatch[0], '').trim();
+                        let fullDesc = (bufferText + " " + currentDesc).trim();
+
+                        if (fullDesc.length > 2) {
+                            let parts = fullDesc.split(/\s+/);
+                            let code = parts[0].toUpperCase();
+                            
+                            parts.shift(); // Quitar el código de las partes
+                            let name = parts.join(' ').toUpperCase();
+                            if (name === "") name = code;
+
+                            // Comprobar duplicados de forma clásica
+                            let existe = false;
+                            for (let j = 0; j < extras.length; j++) {
+                                if (extras[j].c === code) { existe = true; break; }
+                            }
+
+                            if (!existe) {
+                                extras.unshift({ c: code, n: name, p: price, isExtra: true });
+                                added++;
+                            }
+                        }
+                        bufferText = ""; // Limpiar memoria
+                    } else {
+                        bufferText += " " + row;
+                    }
+                }
+
+                if (added > 0) {
+                    saveAndRefresh();
+                    alert("¡Éxito! Se agregaron " + added + " productos.");
+                    closeSmartModal();
+                } else {
+                    alert("No se detectaron precios. Asegúrate de que los precios tengan decimales (Ejemplo: $ 27.00)");
+                }
+
+            } catch (error) {
+                alert("Ocurrió un error al procesar: " + error.message);
+            }
+        }
+
+        // 4. RENDERIZADO CLÁSICO (Evita el SyntaxError en editores móviles)
+        function render(resetScroll) {
+            let container = document.getElementById('productList');
+            if (resetScroll) { document.getElementById('listContainer').scrollTop = 0; }
+            
+            container.innerHTML = ""; // Limpiar lista
+            
+            let itemsToRender = filteredDB.slice(0, limit);
+
+            for (let i = 0; i < itemsToRender.length; i++) {
+                let item = itemsToRender[i];
+                let div = document.createElement('div');
+                div.className = "product-card flex justify-between items-center";
+                
+                let btnEliminar = "";
+                if (item.isExtra) {
+                    btnEliminar = '<button onclick="deleteItem(\'' + item.c + '\')" class="text-gray-800 text-xl px-2">×</button>';
+                }
+
+                div.innerHTML = 
+                    '<div class="flex-1 pr-2 overflow-hidden">' +
+                        '<div class="text-[8px] font-black text-brand_red font-mono uppercase mb-0.5">' + item.c + '</div>' +
+                        '<div class="text-[11px] text-gray-300 uppercase font-medium leading-tight">' + item.n + '</div>' +
+                    '</div>' +
+                    '<div class="text-right flex items-center gap-3">' +
+                        '<div class="text-lg font-black text-white font-mono tracking-tighter">$' + item.p + '</div>' +
+                        btnEliminar +
+                    '</div>';
+                
+                container.appendChild(div);
+            }
+        }
+
+        function handleSearch(query) {
+            if (!query) query = "";
+            let q = query.toLowerCase().trim();
+            
+            filteredDB = [];
+            for (let i = 0; i < db.length; i++) {
+                let item = db[i];
+                if ((item.c && String(item.c).toLowerCase().includes(q)) || 
+                    (item.n && String(item.n).toLowerCase().includes(q))) {
+                    filteredDB.push(item);
+                }
+            }
+            
+            limit = 60;
+            document.getElementById('counter').innerText = filteredDB.length + " ITEMS";
+            render(true);
+        }
+
+        // 5. FUNCIONES DE GUARDADO
+        function saveManual() {
+            let c = document.getElementById('newC').value.trim().toUpperCase();
+            let n = document.getElementById('newN').value.trim().toUpperCase();
+            let p = document.getElementById('newP').value;
+            
+            if (c && p) {
+                if (n === "") n = c;
+                extras.unshift({c: c, n: n, p: parseFloat(p), isExtra: true});
+                saveAndRefresh();
+                closeManualModal();
+            } else {
+                alert("Código y precio son obligatorios");
+            }
+        }
+
+        function deleteItem(code) {
+            let nuevosExtras = [];
+            for(let i=0; i < extras.length; i++) {
+                if(extras[i].c !== code) nuevosExtras.push(extras[i]);
+            }
+            extras = nuevosExtras;
+            saveAndRefresh();
+        }
+
+        function clearAllExtras() {
+            if (confirm("¿Borrar todo lo agregado?")) {
+                extras = [];
+                saveAndRefresh();
+            }
+        }
+
+        function saveAndRefresh() {
+            localStorage.setItem('alvarez_extras', JSON.stringify(extras));
+            db = [].concat(extras, baseCatalogo);
+            handleSearch(document.getElementById('searchInput').value);
+        }
+
+        // Eventos
+        document.getElementById('listContainer').onscroll = function(e) {
+            if (e.target.scrollTop + e.target.clientHeight >= e.target.scrollHeight - 50) {
+                if (limit < filteredDB.length) { 
+                    limit += 60; 
+                    render(false); 
+                }
+            }
+        };
+
+        document.getElementById('searchInput').oninput = function(e) {
+            handleSearch(e.target.value);
+        };
+        
+        // Iniciar app
+        handleSearch("");
+    </script>
 </body>
 </html>
