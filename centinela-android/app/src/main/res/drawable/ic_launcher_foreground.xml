@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- anillo de radar segmentado -->
+    <path android:strokeColor="#1E90FF" android:strokeWidth="2.2" android:strokeLineCap="round"
+        android:pathData="M54,24 A30,30 0 0,1 81,41 M84,54 A30,30 0 0,1 67,81 M54,84 A30,30 0 0,1 27,67 M24,54 A30,30 0 0,1 41,27"/>
+    <!-- escudo -->
+    <path android:strokeColor="#00E5FF" android:strokeWidth="3" android:strokeLineJoin="round"
+        android:pathData="M54,33 L70,39 L70,54 C70,64 63,71 54,75 C45,71 38,64 38,54 L38,39 Z"/>
+    <path android:fillColor="#3300E5FF"
+        android:pathData="M54,33 L70,39 L70,54 C70,64 63,71 54,75 C45,71 38,64 38,54 L38,39 Z"/>
+    <!-- mira -->
+    <path android:strokeColor="#E0FBFF" android:strokeWidth="2.4" android:strokeLineCap="round"
+        android:pathData="M54,45 L54,51 M54,59 L54,65 M44,55 L50,55 M58,55 L64,55"/>
+    <path android:fillColor="#E0FBFF" android:pathData="M54,55 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0"/>
+</vector>

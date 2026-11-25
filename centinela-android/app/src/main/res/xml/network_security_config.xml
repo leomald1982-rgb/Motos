@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- El Servicio Sismológico Nacional (México) solo publica su RSS por HTTP. -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">ssn.unam.mx</domain>
+    </domain-config>
+</network-security-config>
